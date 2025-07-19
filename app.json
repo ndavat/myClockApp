@@ -1,0 +1,11 @@
+{
+  "name": "myClockApp",
+  "displayName": "myClock - Alarm & Timer",
+  "react-native": {
+    "permissions": [
+      "android.permission.VIBRATE",
+      "android.permission.RECEIVE_BOOT_COMPLETED",
+      "android.permission.WAKE_LOCK"
+    ]
+  }
+}
