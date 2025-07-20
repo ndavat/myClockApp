@@ -11,7 +11,7 @@ import {
   Switch,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import PushNotification from 'react-native-push-notification';
+import * as Notifications from 'expo-notifications';
 import { useTheme } from '../context/ThemeContext';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
@@ -47,11 +47,14 @@ const AlarmScreen: React.FC = () => {
   }, []);
 
   const setupNotifications = () => {
-    PushNotification.configure({
-      onNotification: function (notification) {
-        console.log('NOTIFICATION:', notification);
-      },
-      requestPermissions: true,
+    Notifications.setNotificationHandler({
+      handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: false,
+        shouldSetBadge: false,
+        shouldShowBanner: true,
+        shouldShowList: true,
+      }),
     });
   };
 
@@ -93,23 +96,19 @@ const AlarmScreen: React.FC = () => {
     resetForm();
   };
 
-  const scheduleNotification = (alarm: Alarm) => {
+  const scheduleNotification = async (alarm: Alarm) => {
     const [hour, minute] = alarm.time.split(':').map(Number);
-    const now = new Date();
-    const alarmTime = new Date();
-    alarmTime.setHours(hour, minute, 0, 0);
-
-    if (alarmTime <= now) {
-      alarmTime.setDate(alarmTime.getDate() + 1);
-    }
-
-    PushNotification.localNotificationSchedule({
-      id: alarm.id,
-      title: 'Alarm',
-      message: alarm.title,
-      date: alarmTime,
-      soundName: 'default',
-      repeatType: alarm.repeat ? 'day' : undefined,
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: 'Alarm',
+        body: alarm.title,
+        sound: 'default',
+      },
+      trigger: {
+        hour,
+        minute,
+        repeats: alarm.repeat,
+      },
     });
   };
 
@@ -120,7 +119,7 @@ const AlarmScreen: React.FC = () => {
         if (updated.isActive) {
           scheduleNotification(updated);
         } else {
-          PushNotification.cancelLocalNotification(id);
+          Notifications.cancelScheduledNotificationAsync(id);
         }
         return updated;
       }
@@ -140,7 +139,7 @@ const AlarmScreen: React.FC = () => {
           text: 'Delete',
           style: 'destructive',
           onPress: () => {
-            PushNotification.cancelLocalNotification(id);
+            Notifications.cancelScheduledNotificationAsync(id);
             const updatedAlarms = alarms.filter(alarm => alarm.id !== id);
             setAlarms(updatedAlarms);
             saveAlarms(updatedAlarms);

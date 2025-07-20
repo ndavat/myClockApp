@@ -1,5 +1,26 @@
 {
-  "name": "myClockApp",
+  "expo": {
+    "name": "myClockApp",
+    "slug": "myClockApp",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.vclockapp"
+    },
+    "android": {
+      "package": "com.vclockapp"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "41baf8e0-9f03-45d2-ae8c-4e76d4d4b590"
+      }
+    }
+  },
   "displayName": "myClock - Alarm & Timer",
   "react-native": {
     "permissions": [

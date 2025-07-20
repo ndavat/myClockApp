@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import { useTheme } from '../context/ThemeContext';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import PushNotification from 'react-native-push-notification';
+import * as Notifications from 'expo-notifications';
 
 const TimerScreen: React.FC = () => {
   const { colors } = useTheme();
@@ -62,10 +62,13 @@ const TimerScreen: React.FC = () => {
   }, [isRunning, isPaused, totalSeconds]);
 
   const showTimerFinishedAlert = () => {
-    PushNotification.localNotification({
-      title: 'Timer Finished',
-      message: 'Your timer has completed!',
-      soundName: 'default',
+    Notifications.scheduleNotificationAsync({
+      content: {
+        title: 'Timer Finished',
+        body: 'Your timer has completed!',
+        sound: 'default',
+      },
+      trigger: null,
     });
 
     Alert.alert(
